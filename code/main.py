@@ -1,5 +1,3 @@
-from gensim import corpora
-from gensim import models
 import os
 import os.path
 
@@ -12,21 +10,24 @@ def load_stopwords():
 
 #  读取文件内容核文件路径，存储为列表
 def load_files():
-    filePaths = []
     fileContents = []
     for root, dirs, files in os.walk(
-        r"../../THUCNews/体育"
+        r"../../THUCNews"
     ):
+        filePaths = []
+        fileContent_eachdir = []
         for index,name in enumerate(files):
             if(index < 5000):
                 filePaths.append(os.path.join(root, name))
                 f = open(filePaths[index], encoding= 'utf-8')
                 fileContent = f.read()
                 f.close()
-                fileContents.append(fileContent)
+                fileContent_eachdir.append(fileContent)
+        fileContents.append(fileContent_eachdir)
     return fileContents
 
 
 
 stop_word = load_stopwords()
 file_content = load_files()
+print(file_content)
