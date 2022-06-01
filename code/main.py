@@ -1,46 +1,33 @@
-from gensim import corpora
-from gensim import models
 import os
 import os.path
-import codecs
-import pandas
 
-def load_content():
-    with open("../THUCNews/财经/798977.txt",encoding="utf-8") as F:
-        content=F.readlines()
-        F.close()
-    return content
-
-
+# 读取停用词
 def load_stopwords():
     with open("stop_words.txt") as F:
         stopwords=F.readlines()
         F.close()
     return [word.strip() for word in stopwords]
 
+#  读取文件内容核文件路径，存储为列表
+def load_files():
+    fileContents = []
+    for root, dirs, files in os.walk(
+        r"../../THUCNews"
+    ):
+        filePaths = []
+        fileContent_eachdir = []
+        for index,name in enumerate(files):
+            if(index < 5000):
+                filePaths.append(os.path.join(root, name))
+                f = open(filePaths[index], encoding= 'utf-8')
+                fileContent = f.read()
+                f.close()
+                fileContent_eachdir.append(fileContent)
+        fileContents.append(fileContent_eachdir)
+    return fileContents
 
-filePaths = []
-fileContents = []
-
-for root, dirs, files in os.walk(
-    r"../THUCNews/体育"
-):
-    for index,name in enumerate(files):
-        filePaths.append(os.path.join(root, name))
-        f = open(filePaths[index], encoding= 'utf-8')
-        fileContent = f.read()
-        f.close()
-        fileContents.append(fileContent)
 
 
-content = load_content()
 stop_word = load_stopwords()
-dictionary = corpora.Dictionary([content])
-texts = [dictionary.doc2bow(text) for text in [content]]
-num_topics=5
-lda = models.ldamodel.LdaModel(corpus=texts, id2word=dictionary, num_topics=num_topics)
-
-for index,topic in lda.print_topics(5):
-    print(topic)
-
-print(content)
+file_content = load_files()
+print(file_content)
