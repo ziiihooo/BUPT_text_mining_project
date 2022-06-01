@@ -1,8 +1,8 @@
 from msilib.schema import Directory
 import os
 import os.path
-from unicodedata import east_asian_width
 import jieba
+import json
 
 split_word = [' ',"\u3000","\n"]
 
@@ -15,7 +15,7 @@ class Participle:
         return [word.strip() for word in stopwords]
 
     #  读取文件内容核文件路径，存储为字典
-    def load_files(self):
+    def load_files(self,read_num=12000):
         fileContents = {}
         for root, dirs, files in os.walk(
             r"../../THUCNews/"
@@ -23,16 +23,31 @@ class Participle:
             filePaths = []
             fileContent_eachdir = {}
             for index,name in enumerate(files):
-                if(index < 50):
+                if(index < read_num):
                     filePaths.append(os.path.join(root, name))
                     f = open(filePaths[index], encoding= 'utf-8')
                     fileContent = f.read()
                     f.close()
                     fileContent_eachdir[name] = fileContent
+                else :
+                    break
             if fileContent_eachdir:
                 fileContents[root] = fileContent_eachdir
         return fileContents
 
+    def write2json(self):
+        result2file = json.dumps(self.seg_result,ensure_ascii=False)
+        f = open('seg_result_json.json',encoding="utf-8", mode='w')
+        f.write(result2file)
+        f.close()
+        return
+
+    def read_json2directory(self):
+        f = open('seg_result_json.json',encoding="utf-8", mode='r')
+        content = f.read()
+        self.seg_result = json.loads(content)
+        f.close()
+        return
 
     # 分词函数
     def divide_delete_words(self,file_contents,stop_word):
@@ -56,8 +71,12 @@ class Participle:
             result[file_eachdir] = file_seg_list
         return result
 
-    def __init__(self) -> Directory:
-        stop_word = self.load_stopwords()
-        file_content = self.load_files()
-        self.seg_result = self.divide_delete_words(file_content,stop_word) 
+    def __init__(self, read_num = 12000,is_read_file = False) -> Directory:
+        if not is_read_file:
+            stop_word = self.load_stopwords()
+            file_content = self.load_files(read_num)
+            self.seg_result = self.divide_delete_words(file_content,stop_word) 
+            self.write2json()
+        elif is_read_file:
+            self.read_json2directory()
         return 
