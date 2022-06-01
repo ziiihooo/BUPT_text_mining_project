@@ -1,0 +1,8 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/xxxx/python3.6/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/xxxx/python3.6/site-packages"
+    ]
+}
