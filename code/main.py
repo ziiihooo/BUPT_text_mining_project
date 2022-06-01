@@ -21,6 +21,7 @@ def load_stopwords():
 
 filePaths = []
 fileContents = []
+
 for root, dirs, files in os.walk(
     r"../THUCNews/体育"
 ):
